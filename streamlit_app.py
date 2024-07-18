@@ -30,7 +30,7 @@ if not os.path.exists(model_file_name) or not os.path.exists(scaler_file_name):
     st.error(f"Failed to find the model or scaler file.")
     st.stop()
 
-test_file_path = 'test_1.csv'
+test_file_path = 'test.csv'
 test_data = load_and_preprocess_data(test_file_path)
 test_price_data = test_data[['SystemSellPrice']].values
 
