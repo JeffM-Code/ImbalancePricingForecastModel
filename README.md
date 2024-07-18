@@ -7,7 +7,7 @@ Toggle the predicted vs actual values of model to see how well the model predict
 ### Example:<br><br>
 <img src="example.png" alt="example" width="650"/><br><br>
 
-<br><br> The original model is based on LSTM model forecasting, however there seem to be many issues with loading that model into streamlit, so for now I will have to use a model that accomplishes the same goal of forecasting. The point is to implement a forecasting model to inform trading strategies, so this effectively does the same thing, although i'll try to load the LSTM model so that the app and model development are $1:1$.<br><br>
+<br><br> The original model is based on LSTM model forecasting, however there seem to be many issues with loading that model into streamlit, so for now I will have to use a model that accomplishes the same goal of forecasting. The point is to implement a forecasting model to inform trading strategies, so this should effectively does the same thing.<br><br>
 
 For this random forest model:<br><br>
 
