@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
-from tensorflow.keras.models import load_model
+import tensorflow as tf
 import matplotlib.pyplot as plt
 import os
 
@@ -17,7 +17,7 @@ def load_and_preprocess_data(file_path):
 
 @st.cache_resource
 def load_model_and_scaler(model_path, scaler_data):
-    model = load_model(model_path)
+    model = tf.keras.models.load_model(model_path)
     scaler = MinMaxScaler(feature_range=(0, 1))
     scaler.fit(scaler_data)
     return model, scaler
