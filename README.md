@@ -4,7 +4,7 @@
 
 Toggle the predicted vs actual values of model to see how well the model predicts system buy / sell prices. The slider introduces a percentage of the data into the model and populates the values available for the model to forecast based on.<br><br>
 
-#### Demonstration:<br><br>
+### Demo:<br><br>
 <img src="example.png" alt="example" width="650"/><br><br>
 
 <br><br> The original model is based on LSTM model forecasting, however there seem to be many issues with loading that model into streamlit, so for now I will have to use a model that accomplishes the same goal of forecasting. The point is to implement a forecasting model to inform trading strategies, so this effectively does the same thing, although i'll try to load the LSTM model so that the app and model development are $1:1$.<br><br>
