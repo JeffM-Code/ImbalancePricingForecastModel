@@ -1,9 +1,9 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
-import tensorflow as tf
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import load_model
 import os
 
 def load_and_preprocess_data(file_path):
@@ -17,12 +17,12 @@ def load_and_preprocess_data(file_path):
 
 @st.cache_resource
 def load_model_and_scaler(model_path, scaler_data):
-    model = tf.keras.models.load_model(model_path)
+    model = load_model(model_path)
     scaler = MinMaxScaler(feature_range=(0, 1))
     scaler.fit(scaler_data)
     return model, scaler
 
-model_file_name = 'LSTM_price.keras'
+model_file_name = 'LSTM_price.h5'
 
 if not os.path.exists(model_file_name):
     st.error(f"Failed to find the model file: {model_file_name}.")
