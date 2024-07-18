@@ -3,8 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
-import torch
-import torch.nn as nn
+import pickle
 import os
 
 def load_and_preprocess_data(file_path):
@@ -17,32 +16,18 @@ def load_and_preprocess_data(file_path):
     return data
 
 @st.cache_resource
-def load_model_and_scaler(model_path, scaler_data):
-    model = LSTMModel()
-    model.load_state_dict(torch.load(model_path))
-    model.eval()
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    scaler.fit(scaler_data)
+def load_model_and_scaler(model_path, scaler_path):
+    with open(model_path, 'rb') as model_file:
+        model = pickle.load(model_file)
+    with open(scaler_path, 'rb') as scaler_file:
+        scaler = pickle.load(scaler_file)
     return model, scaler
 
-class LSTMModel(nn.Module):
-    def __init__(self, input_size=1, hidden_layer_size=100, output_size=1):
-        super(LSTMModel, self).__init__()
-        self.hidden_layer_size = hidden_layer_size
-        self.lstm = nn.LSTM(input_size, hidden_layer_size, num_layers=3, dropout=0.2, batch_first=True)
-        self.linear = nn.Linear(hidden_layer_size, output_size)
+model_file_name = 'RF_price.pkl'
+scaler_file_name = 'scaler.pkl'
 
-    def forward(self, input_seq):
-        h_0 = torch.zeros(3, input_seq.size(0), self.hidden_layer_size).requires_grad_()
-        c_0 = torch.zeros(3, input_seq.size(0), self.hidden_layer_size).requires_grad_()
-        lstm_out, _ = self.lstm(input_seq, (h_0.detach(), c_0.detach()))
-        predictions = self.linear(lstm_out[:, -1])
-        return predictions
-
-model_file_name = 'LSTM_price.pth'
-
-if not os.path.exists(model_file_name):
-    st.error(f"Failed to find the model file: {model_file_name}.")
+if not os.path.exists(model_file_name) or not os.path.exists(scaler_file_name):
+    st.error(f"Failed to find the model or scaler file.")
     st.stop()
 
 test_file_path = 'test_1.csv'
@@ -51,7 +36,7 @@ test_price_data = test_data[['SystemSellPrice']].values
 
 combined_price_data = test_price_data
 
-model, scaler = load_model_and_scaler(model_file_name, combined_price_data)
+model, scaler = load_model_and_scaler(model_file_name, scaler_file_name)
 
 def create_dataset(data, time_step=1):
     X, Y = [], []
@@ -74,10 +59,8 @@ if st.button('Predict'):
     else:
         test_scaled_data = scaler.transform(test_price_data[:test_data_length])
         X_test, y_test = create_dataset(test_scaled_data, time_step)
-        X_test = torch.tensor(X_test, dtype=torch.float32).reshape(X_test.shape[0], X_test.shape[1], 1)
-        with torch.no_grad():
-            test_predictions = model(X_test).numpy()
-        test_predictions = scaler.inverse_transform(test_predictions)
+        test_predictions = model.predict(X_test)
+        test_predictions = scaler.inverse_transform(test_predictions.reshape(-1, 1)).flatten()
         
         test_series_adjusted = pd.Series(test_price_data.flatten()[time_step + 1:test_data_length], 
                                          index=test_data.index[time_step + 1:test_data_length])
@@ -97,10 +80,8 @@ if st.checkbox('Show Scatter Plot'):
     else:
         test_scaled_data = scaler.transform(test_price_data[:test_data_length])
         X_test, y_test = create_dataset(test_scaled_data, time_step)
-        X_test = torch.tensor(X_test, dtype=torch.float32).reshape(X_test.shape[0], X_test.shape[1], 1)
-        with torch.no_grad():
-            test_predictions = model(X_test).numpy()
-        test_predictions = scaler.inverse_transform(test_predictions)
+        test_predictions = model.predict(X_test)
+        test_predictions = scaler.inverse_transform(test_predictions.reshape(-1, 1)).flatten()
         
         test_series_adjusted = pd.Series(test_price_data.flatten()[time_step + 1:test_data_length], 
                                          index=test_data.index[time_step + 1:test_data_length])
