@@ -48,7 +48,7 @@ def create_dataset(data, time_step=1):
 
 time_step = 10
 
-st.title('System Sell / Buy Price Prediction')
+st.title('System Sell & Buy Price Forecasting')
 
 data_percentage = st.slider('Select the percentage of test data to use', 1, 100, 50)
 test_data_length = int(len(test_price_data) * (data_percentage / 100))
