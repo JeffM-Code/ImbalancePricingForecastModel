@@ -9,7 +9,7 @@ Toggle the predicted vs actual values of model to see how well the model predict
 
 <br><br> The original model is based on LSTM model forecasting, however there seem to be many issues with loading that model into streamlit, so for now I will have to use a model that accomplishes the same goal of forecasting. The point is to implement a forecasting model to help inform trading strategies, so this should effectively do the same thing.<br><br>
 
-### Model analysis:<br><br>
+### Model Analysis:<br><br>
 
 ```
 scaler = MinMaxScaler(feature_range=(0, 1))
